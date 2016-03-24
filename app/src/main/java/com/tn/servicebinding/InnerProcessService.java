@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
-public class MyBindService extends Service {
+public class InnerProcessService extends Service {
     public static final int OPERATION_START = 1;
     public static final int OPERATION_FINISHED = 2;
 
@@ -43,22 +43,24 @@ public class MyBindService extends Service {
         private final WeakReference<Context> contextWeakReference;
 
         public MessageHandler(Context context) {
-            contextWeakReference = new WeakReference<Context>(context);
+            contextWeakReference = new WeakReference<>(context);
         }
 
         @Override
-        public void handleMessage(final Message msg) {
+        public void handleMessage(Message msg) {
             Context reference = contextWeakReference.get();
             if (reference != null) {
+                final Messenger replyTo = msg.replyTo;
                 switch (msg.what) {
                     case OPERATION_START:
                         Toast.makeText(reference, "Operation started.", Toast.LENGTH_SHORT).show();
+
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 try {
                                     Message message = Message.obtain(null, OPERATION_FINISHED);
-                                    msg.replyTo.send(message);
+                                    replyTo.send(message);
                                 } catch (RemoteException ex) {
                                     ex.printStackTrace();
                                 }

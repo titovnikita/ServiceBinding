@@ -9,7 +9,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <service android:name=".MyBindService" android:process=":service"/>
+        <service android:name=".InnerProcessService" android:process=":service"/>
+        <service android:name=".AidlService" android:process=":service"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>
